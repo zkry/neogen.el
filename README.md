@@ -14,6 +14,9 @@ MELPA.
 
 ## Usage and Configuration
 
+Your buffer should first have `tree-sitter-mode` enabled
+(https://github.com/emacs-tree-sitter/elisp-tree-sitter).
+
 You can generate a template via the command `neogen`, which will
 prompt you for a template type.  The available template types are:
 `func`, `class`, `type`, and `file`.  Note that not all languages
