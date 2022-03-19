@@ -700,3 +700,11 @@
     (parameters " * @param $1 %s $1" ((type . (func))))
     (return_statement " * @return $1" ((type . (func))))
     (nil " */" ((type . (type func))))))
+
+(defvar neogen-mode-configuration-alist
+  '((sh-mode neogen-configuration-sh neogen-template-google-bash)
+    (c-mode neogen-configuration-c neogen-template-doxygen)
+    (ruby-mode neogen-configuration-ruby neogen-template-rdoc)
+    (python-mode neogen-configuration-python neogen-template-numpydoc)
+    (php-mode neogen-configuration-php neogen-template-phpdoc)
+    (typescript-mode neogen-configuration-typescript neogen-template-jsdoc)))

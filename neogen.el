@@ -3,10 +3,9 @@
 ;; Author: Zachary Romero
 ;; Maintainer: Zachary Romero
 ;; Version: 0.1.0
-;; Package-Requires: ((yasnippet "0.14.0"))
+;; Package-Requires: ((yasnippet "0.14.0") (tree-sitter "0.18.0") (tsc "0.18.0"))
 ;; Homepage: https://github.com/zkry
-;; Keywords: tools
-
+;; Keywords: convenience
 
 ;; This file is not part of GNU Emacs
 
@@ -271,21 +270,15 @@
     (goto-char start)
     (yas-expand-snippet yas-snippet)))
 
-(defvar neogen-mode-configuration-alist
-  '(("Shell-script" neogen-configuration-sh neogen-template-google-bash)
-    ("C/*l" neogen-configuration-c neogen-template-doxygen)
-    ("Ruby" neogen-configuration-ruby neogen-template-rdoc)
-    ("Python" neogen-configuration-python neogen-template-numpydoc)
-    ("PHP//l" neogen-configuration-php neogen-template-phpdoc)
-    ("typescript" neogen-configuration-typescript neogen-template-jsdoc)))
+
 
 (defun neogen-fetch-configuration ()
   "Return the lsp configuration associated with the current mode."
-  (symbol-value (nth 1 (assoc mode-name neogen-mode-configuration-alist #'equal))))
+  (symbol-value (nth 1 (assoc major-mode neogen-mode-configuration-alist #'equal))))
 
 (defun neogen-fetch-template ()
   "Return the documentation template associated with the current mode."
-  (symbol-value (nth 2 (assoc mode-name neogen-mode-configuration-alist #'equal))))
+  (symbol-value (nth 2 (assoc major-mode neogen-mode-configuration-alist #'equal))))
 
 (defun neogen (type)
   "Insert documentation comments of TYPE according to major-mode."
