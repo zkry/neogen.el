@@ -251,8 +251,6 @@
       (insert "\n")
       (buffer-string))))
 
-
-
 (defvar neogen-overlay nil
   "Overlay to store styling for newly inserted documentation text.")
 

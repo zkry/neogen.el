@@ -707,4 +707,7 @@
     (ruby-mode neogen-configuration-ruby neogen-template-rdoc)
     (python-mode neogen-configuration-python neogen-template-numpydoc)
     (php-mode neogen-configuration-php neogen-template-phpdoc)
-    (typescript-mode neogen-configuration-typescript neogen-template-jsdoc)))
+    (typescript-mode neogen-configuration-typescript neogen-template-jsdoc)
+    (tsx-mode neogen-configuration-typescript neogen-template-jsdoc)
+    (rjsx-mode neogen-configuration-javascript neogen-template-jsdoc)
+    (javascript-mode neogen-configuration-javascript neogen-template-jsdoc)))
