@@ -174,7 +174,9 @@
             (throw 'result (list loc-node extract-fn))))))))
 
 (defun neogen--group-extractions (extractions)
-  ""
+  "Converts a vector of EXTRACTIONS to an alist by type.
+
+Ex: [(a . 1) (a . 2) (b . 3)]  is converted to ((a 1 2) (b 3))."
   (seq-reduce (lambda (acc elt)
                 (let* ((key (car elt))
                        (node (cdr elt))
@@ -190,7 +192,10 @@
   (neogen--group-extractions (funcall extractor node)))
 
 (defun neogen-generate-template (type template extractions)
-  ""
+  "Generate insertion template given TEMPLATE definition, data EXTRACTIONS, and TYPE.
+
+TYPE should be the symbol of the type of document generation that
+is being performed: func, class, file, or type."
   (let ((result '())
         (template (neogen-template-filter template type)))
     (dolist (template-item template)
@@ -254,21 +259,11 @@
 (defvar neogen-overlay nil
   "Overlay to store styling for newly inserted documentation text.")
 
-(defun neogen--change-advice (orig &rest args)
-  ""
-  (if (seq-some (lambda (ov)
-                  (eql (overlay-get ov 'type) 'neogen-template))
-                (overlays-at (point)))
-     nil
-    (apply orig args)))
-
 (defun neogen-insert-template (node yas-snippet)
   "Insert documentation lines given the NODE to be documented and the YAS-SNIPPET."
   (let ((start (tsc-node-start-position node)))
     (goto-char start)
     (yas-expand-snippet yas-snippet)))
-
-
 
 (defun neogen-fetch-configuration ()
   "Return the lsp configuration associated with the current mode."
@@ -283,14 +278,13 @@
   (interactive
    (list
     (let ((config (neogen-fetch-configuration)))
+      (unless tree-sitter-mode
+        (error "Mode tree-sitter-mode must be enabled"))
       (unless config
         (error "No neogen configuration found for mode %s" mode-name))
       (intern (completing-read "Select type:" (neogen--supported-config-types config) nil t)))))
-  (unless tree-sitter-mode
-    (error "Mode tree-sitter-mode must be enabled"))
   (let ((config (neogen-fetch-configuration))
         (template (neogen-fetch-template)))
-    
     (unless template
       (error "No neogen template found for mode %s" mode-name))
     (let ((type-config (neogen-config-get config type)))
