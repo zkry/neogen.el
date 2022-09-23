@@ -267,7 +267,9 @@ is being performed: func, class, file, or type."
 
 (defun neogen-fetch-configuration ()
   "Return the lsp configuration associated with the current mode."
-  (symbol-value (nth 1 (assoc major-mode neogen-mode-configuration-alist #'equal))))
+  (let ((file-extension (file-name-extension buffer-file-name)))
+    (or (symbol-value (nth 1 (assoc file-extension neogen-mode-configuration-alist #'equal)))
+        (symbol-value (nth 1 (assoc major-mode neogen-mode-configuration-alist #'equal))))))
 
 (defun neogen-fetch-template ()
   "Return the documentation template associated with the current mode."

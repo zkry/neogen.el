@@ -701,13 +701,19 @@
     (return_statement " * @return $1" ((type . (func))))
     (nil " */" ((type . (type func))))))
 
-(defvar neogen-mode-configuration-alist
+(defconst neogen-mode-configuration-alist
   '((sh-mode neogen-configuration-sh neogen-template-google-bash)
-    (c-mode neogen-configuration-c neogen-template-doxygen)
-    (ruby-mode neogen-configuration-ruby neogen-template-rdoc)
-    (python-mode neogen-configuration-python neogen-template-numpydoc)
-    (php-mode neogen-configuration-php neogen-template-phpdoc)
-    (typescript-mode neogen-configuration-typescript neogen-template-jsdoc)
-    (tsx-mode neogen-configuration-typescript neogen-template-jsdoc)
-    (rjsx-mode neogen-configuration-javascript neogen-template-jsdoc)
-    (javascript-mode neogen-configuration-javascript neogen-template-jsdoc)))
+    ("sh" neogen-configuration-sh neogen-template-google-bash)
+    ("c" neogen-configuration-c neogen-template-doxygen)
+    ("rb" neogen-configuration-ruby neogen-template-rdoc)
+    ("py" neogen-configuration-python neogen-template-numpydoc)
+    ("php" neogen-configuration-php neogen-template-phpdoc)
+    ("ts" neogen-configuration-typescript neogen-template-jsdoc)
+    ("js" neogen-configuration-javascript neogen-template-jsdoc))
+  "List of configuration for which templates to apply in which circumstances.
+
+Each element of the list should take the following form:
+(FILE-EXTENSION-OR-MODE-SYM CONFIGURATION TEMPLATE).
+
+If FILE-EXTENSION-OR-MODE-SYM is a string, it is interpereted as
+the extension of the visiting buffer-file-name.")
