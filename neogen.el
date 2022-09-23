@@ -67,7 +67,7 @@
                                                 kwargs))
 
 (defun neogen-tree-query* (node query)
-  ""
+  "Perform the tree extraction QUERY on tree-sitter NODE."
   (let ((node-type (plist-get query :node-type))
         (retrieve (plist-get query :retrieve))
         (subtree (plist-get query :subtree))
