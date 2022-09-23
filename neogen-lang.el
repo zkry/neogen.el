@@ -515,7 +515,7 @@
 
     (nil "/**" ((type . (func class))))
     (class_name " * @classdesc $1" ((type . (class))
-                                    (before-first-item . (" * " " * @class"))))
+                                    (before-first-item . (" * $1" " * @class"))))
     (parameters " * @param {any} %s $1" ((type . (func))))
     ((type parameters) " * @param {%s} %s $1" ((type . (func))
                                                (required . tparam)))

@@ -206,8 +206,10 @@ is being performed: func, class, file, or type."
           (when (and (or (and .no-results (not extractions))
                          (and (not .no-results) extractions))
                      (or (not .required) (assoc .required extractions)))
+            ;; processing of the before-first-item string:
             (when (and .before-first-item
-                       (or (not key) (cdr (assoc key extractions))))
+                       ;; QUESTION: (cdr (assoc key extractions)) or (assoc key extractions)?
+                       (or (not key) (assoc key extractions)))
               (dolist (extra-line .before-first-item)
                 (push extra-line result)))
             (when .required
@@ -221,8 +223,10 @@ is being performed: func, class, file, or type."
                   (push (apply #'format (append (list line-str) format-params)) result))))
             (cond
              (key
-              (let ((params (cdr (assoc key extractions))))
-                (when params
+              (let* ((key-params (assoc key extractions))
+                     (params (cdr key-params)))
+                (cond
+                 (params
                   (when (eql .limit 'once)
                     (setq params (list (car params))))
                   (dolist (param (seq-reverse params))
@@ -236,7 +240,11 @@ is being performed: func, class, file, or type."
                      ((stringp param)
                       (push (format line-str (tsc-node-text param)) result))
                      (t
-                      (push (format line-str (tsc-node-text param)) result)))))))
+                      (push (format line-str (tsc-node-text param)) result)))))
+                 ;; When the key exists but has no values,
+                 ;; run the template once.
+                 (key-params
+                  (push line-str result)))))
              (t (push line-str result)))))))
     (nreverse result)))
 
