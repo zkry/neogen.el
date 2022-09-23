@@ -265,15 +265,19 @@ is being performed: func, class, file, or type."
     (goto-char start)
     (yas-expand-snippet yas-snippet)))
 
+(defun neogen-fetch-config-template ()
+  "Return the relevant entry in `neogen-mode-configuration-alist' for the current buffer."
+  (let ((file-extension (file-name-extension buffer-file-name)))
+    (or (assoc file-extension neogen-mode-configuration-alist #'equal)
+        (assoc major-mode neogen-mode-configuration-alist #'equal))))
+
 (defun neogen-fetch-configuration ()
   "Return the lsp configuration associated with the current mode."
-  (let ((file-extension (file-name-extension buffer-file-name)))
-    (or (symbol-value (nth 1 (assoc file-extension neogen-mode-configuration-alist #'equal)))
-        (symbol-value (nth 1 (assoc major-mode neogen-mode-configuration-alist #'equal))))))
+  (symbol-value (nth 1 (neogen-fetch-config-template))))
 
 (defun neogen-fetch-template ()
   "Return the documentation template associated with the current mode."
-  (symbol-value (nth 2 (assoc major-mode neogen-mode-configuration-alist #'equal))))
+  (symbol-value (nth 2 (neogen-fetch-config-template))))
 
 (defun neogen (type)
   "Insert documentation comments of TYPE according to major-mode."

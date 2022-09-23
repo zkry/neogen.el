@@ -701,7 +701,7 @@
     (return_statement " * @return $1" ((type . (func))))
     (nil " */" ((type . (type func))))))
 
-(defconst neogen-mode-configuration-alist
+(defvar neogen-mode-configuration-alist
   '((sh-mode neogen-configuration-sh neogen-template-google-bash)
     ("sh" neogen-configuration-sh neogen-template-google-bash)
     ("c" neogen-configuration-c neogen-template-doxygen)
