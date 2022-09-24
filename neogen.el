@@ -191,6 +191,27 @@ Ex: [(a . 1) (a . 2) (b . 3)]  is converted to ((a 1 2) (b 3))."
   "Run EXTRACTOR function for NODE."
   (neogen--group-extractions (funcall extractor node)))
 
+(defun neogen-extract-existing (template-lines)
+  "Search the previous buffer lines for TEMPLATE-LINES that already exist.
+
+Return an alist of ((TEMPLATE-STRING . FOUND-VALUE))."
+  (let ((start-pos (point))
+        (extractions '()))
+    (dolist (line template-lines)
+      (when (string-match-p "\\$1" line)
+        (let ((search-regexp (concat "^" (string-replace "\\$1" "\\(.*\\)" (regexp-quote line)) "$")))
+          (save-excursion
+            (goto-char (- (point) 500))
+            (when (search-forward-regexp search-regexp nil t)
+              (let ((match-idx 1)
+                    (matches '()))
+                (while (match-string match-idx)
+                  (push (match-string match-idx) matches)
+                  (cl-incf match-idx))
+                (setq matches (nreverse matches))
+                (push (cons line matches) extractions)))))))
+    extractions))
+
 (defun neogen-generate-template (type template extractions)
   "Generate insertion template given TEMPLATE definition, data EXTRACTIONS, and TYPE.
 
@@ -248,21 +269,27 @@ is being performed: func, class, file, or type."
              (t (push line-str result)))))))
     (nreverse result)))
 
-(defun neogen-template-to-yas-snippet (template)
-  "Convert TEMPLATE lines to a yas snippet."
-  (let ((joined-template (string-join template "\n"))
-        (i 1))
-    (with-temp-buffer
-      (insert joined-template)
-      (goto-char (point-min))
-      (while (not (eobp))
-        (when (looking-at "$1")
-          (delete-char 2)
-          (insert (format "$%d" i))
-          (cl-incf i))
-        (forward-char))
-      (insert "\n")
-      (buffer-string))))
+(defun neogen-template-to-yas-snippet (template existing-extractions)
+  "Convert TEMPLATE lines to a yas snippet.
+
+If EXISTING-EXTRACTIONS is non-nil, it contains an alist of
+elements (TEMPLATE-ITEM . DEFAULT-VALUE)"
+  (let* ((i 1)
+         (yas-template
+          (seq-map
+           (lambda (line)
+             (let ((default-values (cdr (assoc line existing-extractions))))
+               (with-temp-buffer
+                 (insert line)
+                 (goto-char (point-min))
+                 (while (search-forward "$1" nil t)
+                   (if default-values
+                       (replace-match (format "${%d:%s}" i (pop default-values)))
+                     (replace-match (format "$%d" i)))
+                   (cl-incf i))
+                 (buffer-string))))
+           template)))
+    (concat (string-join yas-template "\n") "\n")))
 
 (defvar neogen-overlay nil
   "Overlay to store styling for newly inserted documentation text.")
@@ -309,7 +336,8 @@ is being performed: func, class, file, or type."
           (error "Unable to find code for documentation of type %s" type))
         (let* ((extract-data (apply #'neogen-config-extract loc-data))
                (template-lines (neogen-generate-template type template extract-data))
-               (yas-snippet (neogen-template-to-yas-snippet template-lines)))
+               (existing-extractions (neogen-extract-existing template-lines))
+               (yas-snippet (neogen-template-to-yas-snippet template-lines existing-extractions)))
           (neogen-insert-template (car loc-data) yas-snippet))))))
 
 (defun neogen-func ()
