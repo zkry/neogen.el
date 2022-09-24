@@ -191,6 +191,27 @@ Ex: [(a . 1) (a . 2) (b . 3)]  is converted to ((a 1 2) (b 3))."
   "Run EXTRACTOR function for NODE."
   (neogen--group-extractions (funcall extractor node)))
 
+(defun neogen-extract-existing (template-lines)
+  "Search the previous buffer lines for TEMPLATE-LINES that already exist.
+
+Return an alist of ((TEMPLATE-STRING . FOUND-VALUE))."
+  (let ((start-pos (point))
+        (extractions '()))
+    (dolist (line template-lines)
+      (when (string-match-p "\\$1" line)
+        (let ((search-regexp (concat "^" (string-replace "\\$1" "\\(.*\\)" (regexp-quote line)) "$")))
+          (save-excursion
+            (goto-char (- (point) 500))
+            (when (search-forward-regexp search-regexp nil t)
+              (let ((match-idx 1)
+                    (matches '()))
+                (while (match-string match-idx)
+                  (push (match-string match-idx) matches)
+                  (cl-incf match-idx))
+                (nreverse matches)
+                (push (cons line matches) extractions)))))))
+    extractions))
+
 (defun neogen-generate-template (type template extractions)
   "Generate insertion template given TEMPLATE definition, data EXTRACTIONS, and TYPE.
 
@@ -309,6 +330,7 @@ is being performed: func, class, file, or type."
           (error "Unable to find code for documentation of type %s" type))
         (let* ((extract-data (apply #'neogen-config-extract loc-data))
                (template-lines (neogen-generate-template type template extract-data))
+               (existing-extractions (neogen-extract-existing template-lines))
                (yas-snippet (neogen-template-to-yas-snippet template-lines)))
           (neogen-insert-template (car loc-data) yas-snippet))))))
 
