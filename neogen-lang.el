@@ -558,7 +558,7 @@
     (nil " */" ((no-results . t)
                 (type . (func file class))))
 
-    (nil "/**" ((type . (func file class))))
+    (nil "/**" ((type . (func file class type))))
     (class_name " * @class %s" ((type . (class))))
     (type " * @typedef %s" ((type . (type))))
     (nil " * @brief $1" ((type . (func class type))))
