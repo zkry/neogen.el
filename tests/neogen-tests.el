@@ -34,6 +34,23 @@
                                          " *\n"
                                          " * @param a " (0+ not-newline) "\n"
                                          " * @param b " (0+ not-newline) "\n"
+                                         " * @return" (0+ not-newline) "\n"
+                                         " */")))))
+  (it "Void function shouldn't have return statement"
+    (with-temp-buffer
+      (insert (f-read "./example-files/test.c"))
+      (c-mode)
+      (tree-sitter-mode)
+      (goto-char (point-min))
+      (yas-minor-mode)
+      (search-forward "void noreturn(")
+      (neogen-func)
+      (goto-char (point-min))
+      (expect (search-forward-regexp (rx "/**\n"
+                                         " * @brief " (0+ not-newline) "\n"
+                                         " *\n"
+                                         " * @param a " (0+ not-newline) "\n"
+                                         " * @param b " (0+ not-newline) "\n"
                                          " */"))))))
 
 (provide 'neogen-tests)

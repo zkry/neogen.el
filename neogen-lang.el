@@ -181,12 +181,37 @@
                             tree-base)))
     tree-base))
 
+(defun neogen-configuration-c-has-return-p (result)
+  (let ((primitive-type (cadr (assoc 'primitive_type result)))
+        (return-statement (cadr (assoc 'return_statement result)))
+        (function-declarator (cadr (assoc 'function_declarator result)))
+        (type-identifier (cadr (assoc 'type_identifier result)))
+        (pointer-declarator) (cadr (assoc 'pointer-declarator result)))
+    (cond
+     ((and primitive-type
+           (equal "void" (tsc-node-text primitive-type)))
+      nil)
+     (return-statement
+      return-statement)
+     ((and function-declarator type-identifier)
+      t)
+     ((and function-declarator (or primitive-type
+                                   pointer-declarator))
+      t)
+     (t nil))))
+
 (defconst neogen-configuration-c
   (neogen-config-create
    :func '(([function_declaration function_definition declaration field_declaration template_declaration] [0]
             (lambda (node)
-              (let ((trees (neogen-configuration-c-cpp-tree nil)))
-                (neogen-tree-query node trees)))))
+              (let* ((trees (neogen-configuration-c-cpp-tree nil))
+                     (result (neogen-tree-query node trees))
+                     (has-return-p (neogen-configuration-c-has-return-p result)))
+                (if has-return-p
+                    (cons
+                     (cons 'return_statement has-return-p)
+                     result)
+                  result)))))
    :file '(([translation_unit] [0]
             (lambda (node)
               '())))
@@ -565,7 +590,7 @@
     (nil " *" ((type . (func class type))))
     (tparam " * @tparam %s $1")
     (parameters " * @param %s $1")
-    (return_statement " * @return $1")
+    (return_statement " * @return $1" ((limit . once)))
     (nil " */" ((type . (func class type))))))
 
 (defconst neogen-template-rdoc

@@ -90,7 +90,7 @@
         (if (and position extract)
             (list (cons '_ (tsc-get-nth-child node position)))
           (when (and res-items (eql retrieve 'first))
-              (setq res-items (list (car res-items))))
+            (setq res-items (list (car (last res-items)))))
           (dolist (res-item res-items extractions)
             (when (or (not top-level)
                       (tsc-node-eq node (tsc-get-parent res-item)))
