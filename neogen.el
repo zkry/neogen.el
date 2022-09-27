@@ -177,15 +177,19 @@
   "Converts a vector of EXTRACTIONS to an alist by type.
 
 Ex: [(a . 1) (a . 2) (b . 3)]  is converted to ((a 1 2) (b 3))."
-  (seq-reduce (lambda (acc elt)
-                (let* ((key (car elt))
-                       (node (cdr elt))
-                       (prev (cdr (assoc key acc))))
-                  (when (not (listp node))
-                    (setq node (list node)))
-                  (cons (cons key (append prev node)) (assoc-delete-all key acc))))
-              extractions
-              '()))
+  (seq-map
+   (lambda (elt)
+     (cons (car elt)
+           (seq-reverse (cdr elt))))
+   (seq-reduce (lambda (acc elt)
+                 (let* ((key (car elt))
+                        (node (cdr elt))
+                        (prev (cdr (assoc key acc))))
+                   (when (not (listp node))
+                     (setq node (list node)))
+                   (cons (cons key (append prev node)) (assoc-delete-all key acc))))
+               extractions
+               '())))
 
 (defun neogen-config-extract (node extractor)
   "Run EXTRACTOR function for NODE."
