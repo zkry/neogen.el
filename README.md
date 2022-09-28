@@ -30,9 +30,10 @@ various insertion positions.
 
 The following is a table of configurations and templates:
 
-| Language | Annotation Convention | Supported annotation types |
-|----------|-----------------------|----------------------------|
-| C        | Doxygen               | func, file, type           |
+| Language   | Annotation Convention | Supported annotation types |
+|------------|-----------------------|----------------------------|
+| C          | Doxygen               | func, file, type           |
+| javascript | JSDoc                 | func, class, type, file    |
 
 If you don't see your desired language/annotation-syntax supported
 feel free to open up an issue.

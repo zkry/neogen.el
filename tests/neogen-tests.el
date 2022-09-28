@@ -89,6 +89,24 @@ typedef unsigned char BYTE;
                                          " * @brief" (0+ not-newline) "\n"
                                          " */"))))))
 
+(describe "neogen-js"
+  (before-each
+    (spy-on 'file-name-extension :and-return-value "js"))
+  (it "Function generation works"
+    (neogen-with-test-file #'js-mode "
+function hello(abc, def) {
+  return false
+}
+"
+      (search-forward "hello(")
+      (neogen-func)
+      (goto-char (point-min))
+      (expect (search-forward-regexp (rx "/**\n"
+                                         " * @param {any} abc" (0+ not-newline) "\n"
+                                         " * @param {any} def" (0+ not-newline) "\n"
+                                         " * @returns {}" (0+ not-newline) "\n"
+                                         " */"))))))
+
 (provide 'neogen-tests)
 
 ;;; neogen-tests.el ends here
