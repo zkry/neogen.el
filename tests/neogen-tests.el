@@ -61,6 +61,32 @@ void noreturn(int a, int b) {
                                          " *\n"
                                          " * @param a " (0+ not-newline) "\n"
                                          " * @param b " (0+ not-newline) "\n"
+                                         " */")))))
+  (it "correctly annotates a typedef"
+    (neogen-with-test-file #'c-mode "
+#include <stdio.h>
+
+typedef unsigned char BYTE;
+"
+      (search-forward "unsigned")
+      (neogen-type)
+      (goto-char (point-min))
+      (expect (search-forward-regexp (rx "/**\n"
+                                         " * @typedef BYTE\n" 
+                                         " * @brief" (0+ not-newline) "\n"
+                                         " *\n"
+                                         " */")))))
+  (it "correctly annotates a file"
+    (neogen-with-test-file #'c-mode "
+#include <stdio.h>
+
+typedef unsigned char BYTE;
+"
+      (neogen-file)
+      (goto-char (point-min))
+      (expect (search-forward-regexp (rx "/**\n"
+                                         " * @file\n" 
+                                         " * @brief" (0+ not-newline) "\n"
                                          " */"))))))
 
 (provide 'neogen-tests)
