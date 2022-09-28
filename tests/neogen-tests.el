@@ -5,27 +5,37 @@
 (require 'neogen)
 (require 'f)
 
+(defmacro neogen-with-test-file (mode-cmd contents &rest body)
+  (declare (indent 2))
+  `(with-temp-buffer
+     (insert ,contents)
+     (funcall ,mode-cmd)
+     (tree-sitter-mode)
+     (goto-char (point-min))
+     (yas-minor-mode)
+     ,@body))
+
 (describe "neogen-c"
   (before-each
     (spy-on 'file-name-extension :and-return-value "c"))
+
   (it "Function generation works"
-    (with-temp-buffer
-      (insert (f-read "./example-files/test.c"))
-      (c-mode)
-      (tree-sitter-mode)
-      (goto-char (point-min))
-      (yas-minor-mode)
+    (neogen-with-test-file #'c-mode "#include <stdio.h>
+
+int main() {
+   printf(\"Hello, World!\");
+   return 0;
+}"
       (search-forward "int main()")
       (neogen-func)
       (goto-char (point-min))
       (expect (search-forward-regexp "/\\*\\*\n \\* @brief .*\n \\*\n \\* @return .*\n \\*/"))))
+
   (it "Function generation works with parameters"
-    (with-temp-buffer
-      (insert (f-read "./example-files/test.c"))
-      (c-mode)
-      (tree-sitter-mode)
-      (goto-char (point-min))
-      (yas-minor-mode)
+    (neogen-with-test-file #'c-mode "int add(int a, int b) {
+  printf(\"not doing anythign...\")
+}
+"
       (search-forward "int add(")
       (neogen-func)
       (goto-char (point-min))
@@ -36,13 +46,13 @@
                                          " * @param b " (0+ not-newline) "\n"
                                          " * @return" (0+ not-newline) "\n"
                                          " */")))))
+  
   (it "Void function shouldn't have return statement"
-    (with-temp-buffer
-      (insert (f-read "./example-files/test.c"))
-      (c-mode)
-      (tree-sitter-mode)
-      (goto-char (point-min))
-      (yas-minor-mode)
+    (neogen-with-test-file #'c-mode "
+void noreturn(int a, int b) {
+  printf(\"do nothing\")
+}
+"
       (search-forward "void noreturn(")
       (neogen-func)
       (goto-char (point-min))
