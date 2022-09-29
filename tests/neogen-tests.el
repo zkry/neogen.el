@@ -123,8 +123,20 @@ class Rectangle2 {
                                          " *" (0+ not-newline) "\n"
                                          " * @class" (0+ not-newline) "\n"
                                          " * @classdesc" (0+ not-newline) "\n"
-                                         " */"))))))
+                                         " */")))))
+  (it "Type annotation works"
+    (neogen-with-test-file #'js-mode "
+function alert(a) {
+  return a;
+}
 
+var funny;
+"
+      (search-forward "funny")
+      (neogen-type)
+      (goto-char (point-min))
+      (defconst my-test (buffer-string))
+      (expect (search-forward-regexp (rx "/* @type" (0+ not-newline) "*/"))))))
 
 
 (provide 'neogen-tests)
