@@ -90,7 +90,7 @@
         (if (and position extract)
             (list (cons '_ (tsc-get-nth-child node position)))
           (when (and res-items (eql retrieve 'first))
-            (setq res-items (list (car (last res-items)))))
+            (setq res-items (list (car res-items))))
           (dolist (res-item res-items extractions)
             (when (or (not top-level)
                       (tsc-node-eq node (tsc-get-parent res-item)))
@@ -106,7 +106,7 @@
                   (dolist (tree subtree)
                     (let ((res (neogen-tree-query* res-item tree)))
                       (setq ress (append ress res))))
-                  (setq extractions (append extractions ress))))))))
+                  (setq extractions (append ress extractions))))))))
         extractions))))
 
 (defun neogen-tree-query (node query)
@@ -177,19 +177,15 @@
   "Converts a vector of EXTRACTIONS to an alist by type.
 
 Ex: [(a . 1) (a . 2) (b . 3)]  is converted to ((a 1 2) (b 3))."
-  (seq-map
-   (lambda (elt)
-     (cons (car elt)
-           (seq-reverse (cdr elt))))
-   (seq-reduce (lambda (acc elt)
-                 (let* ((key (car elt))
-                        (node (cdr elt))
-                        (prev (cdr (assoc key acc))))
-                   (when (not (listp node))
-                     (setq node (list node)))
-                   (cons (cons key (append prev node)) (assoc-delete-all key acc))))
-               extractions
-               '())))
+  (seq-reduce (lambda (acc elt)
+                (let* ((key (car elt))
+                       (node (cdr elt))
+                      (prev (cdr (assoc key acc))))
+                  (when (not (listp node))
+                    (setq node (list node)))
+                  (cons (cons key (append prev node)) (assoc-delete-all key acc))))
+              extractions
+              '()))
 
 (defun neogen-config-extract (node extractor)
   "Run EXTRACTOR function for NODE."

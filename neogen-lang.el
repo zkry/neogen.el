@@ -20,7 +20,7 @@
             (lambda (node)
               (let* ((query (tsc-make-query tree-sitter-language neogen-configuration-javascript--tree-query))
                      (tree (tsc-query-captures query node #'ts--buffer-substring-no-properties)))
-                tree)))
+                (seq-into (seq-reverse tree) 'vector))))
            ([expression_statement variable_declaration] [0]
             (lambda (node)
               (let* ((query (tsc-make-query tree-sitter-language

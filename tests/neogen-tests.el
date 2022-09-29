@@ -135,8 +135,28 @@ var funny;
       (search-forward "funny")
       (neogen-type)
       (goto-char (point-min))
-      (defconst my-test (buffer-string))
       (expect (search-forward-regexp (rx "/* @type" (0+ not-newline) "*/"))))))
+
+
+(describe "neogen-ts"
+  (before-each
+    (spy-on 'file-name-extension :and-return-value "ts"))
+  (it "Function generation works"
+    (neogen-with-test-file #'typescript-mode "
+function hello(abc: number, def:number) {
+  return false
+}
+"
+      (search-forward "hello(")
+      (neogen-func)
+      (goto-char (point-min))
+      (defconst my-test (buffer-string))
+      (expect (search-forward-regexp (rx "/**\n"
+                                         " * @param {number} abc" (0+ not-newline) "\n"
+                                         " * @param {number} def" (0+ not-newline) "\n"
+                                         " * @returns {}" (0+ not-newline) "\n"
+                                         " */"))))))
+
 
 
 (provide 'neogen-tests)
