@@ -105,7 +105,27 @@ function hello(abc, def) {
                                          " * @param {any} abc" (0+ not-newline) "\n"
                                          " * @param {any} def" (0+ not-newline) "\n"
                                          " * @returns {}" (0+ not-newline) "\n"
+                                         " */")))))
+
+  (it "Class generation works"
+    (neogen-with-test-file #'js-mode "
+class Rectangle2 {
+  constructor(height, width) {
+    this.height = height;
+    this.width = width;
+  }
+}
+"
+      (search-forward "Rectangle")
+      (neogen-class)
+      (goto-char (point-min))
+      (expect (search-forward-regexp (rx "/**\n"
+                                         " *" (0+ not-newline) "\n"
+                                         " * @class" (0+ not-newline) "\n"
+                                         " * @classdesc" (0+ not-newline) "\n"
                                          " */"))))))
+
+
 
 (provide 'neogen-tests)
 
