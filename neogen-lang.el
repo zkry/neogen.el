@@ -742,3 +742,5 @@ Each element of the list should take the following form:
 
 If FILE-EXTENSION-OR-MODE-SYM is a string, it is interpereted as
 the extension of the visiting buffer-file-name.")
+
+(provide 'neogen-lang)
