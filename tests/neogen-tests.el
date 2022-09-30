@@ -3,6 +3,7 @@
 (require 'buttercup)
 (require 'tree-sitter)
 (require 'neogen)
+(require 'cc-mode)
 
 (defmacro neogen-with-test-file (mode-cmd contents &rest body)
   (declare (indent 2))
