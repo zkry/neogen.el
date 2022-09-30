@@ -3,7 +3,7 @@
 ;; Author: Zachary Romero
 ;; Maintainer: Zachary Romero
 ;; Version: 0.1.0
-;; Package-Requires: ((yasnippet "0.14.0") (tree-sitter "0.18.0") (tsc "0.18.0"))
+;; Package-Requires: ((yasnippet "0.14.0") (tree-sitter "0.18.0") (tree-sitter-langs "20220925.1020") (tsc "0.18.0"))
 ;; Homepage: https://github.com/zkry
 ;; Keywords: convenience
 
@@ -359,6 +359,8 @@ elements (TEMPLATE-ITEM . DEFAULT-VALUE)"
   "Insert file documentation according to major-mode.  Same as (neogen 'file)."
   (interactive)
   (neogen 'file))
+
+(require 'neogen-lang)
 
 (provide 'neogen)
 
