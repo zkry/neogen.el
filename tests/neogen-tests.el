@@ -165,7 +165,23 @@ var funny;
       (neogen-type)
       (goto-char (point-min))
       (defconst my-test (buffer-string))
-      (expect (search-forward-regexp (rx "/* @type" (0+ not-newline) "*/"))))))
+      (expect (search-forward-regexp (rx "/* @type" (0+ not-newline) "*/")))))
+  (it "Class generation works"
+    (neogen-with-test-file #'typescript-mode "
+class Rectangle2 {
+  constructor(height, width) {
+    this.height=height
+  }
+}
+"
+      (search-forward "Rectangle")
+      (neogen-class)
+      (goto-char (point-min))
+      (expect (search-forward-regexp (rx "/**\n"
+                                         " *" (0+ not-newline) "\n"
+                                         " * @class" (0+ not-newline) "\n"
+                                         " * @classdesc" (0+ not-newline) "\n"
+                                         " */"))))))
 
 
 
