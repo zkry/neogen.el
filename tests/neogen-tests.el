@@ -156,7 +156,16 @@ function hello(abc: number, def:number) {
                                          " * @param {number} abc" (0+ not-newline) "\n"
                                          " * @param {number} def" (0+ not-newline) "\n"
                                          " * @returns {}" (0+ not-newline) "\n"
-                                         " */"))))))
+                                         " */")))))
+  (it "Type generation works"
+    (neogen-with-test-file #'typescript-mode "
+var funny;
+"
+      (search-forward "funny")
+      (neogen-type)
+      (goto-char (point-min))
+      (defconst my-test (buffer-string))
+      (expect (search-forward-regexp (rx "/* @type" (0+ not-newline) "*/"))))))
 
 
 

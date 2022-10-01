@@ -530,7 +530,7 @@
                      (no-results . t)))
     (nil "/* @type $1 */" ((type . (type))
                            (no-results . t)))
-
+    (nil "/* @type $1 */" ((type . (type))))
     (nil "/**" ((type . (file))
                 (no-results . t)))
     (nil " * @module $1" ((type . (file))
