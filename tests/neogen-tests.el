@@ -151,7 +151,6 @@ function hello(abc: number, def:number) {
       (search-forward "hello(")
       (neogen-func)
       (goto-char (point-min))
-      (defconst my-test (buffer-string))
       (expect (search-forward-regexp (rx "/**\n"
                                          " * @param {number} abc" (0+ not-newline) "\n"
                                          " * @param {number} def" (0+ not-newline) "\n"
@@ -164,7 +163,6 @@ var funny;
       (search-forward "funny")
       (neogen-type)
       (goto-char (point-min))
-      (defconst my-test (buffer-string))
       (expect (search-forward-regexp (rx "/* @type" (0+ not-newline) "*/")))))
   (it "Class generation works"
     (neogen-with-test-file #'typescript-mode "
@@ -182,6 +180,42 @@ class Rectangle2 {
                                          " * @class" (0+ not-newline) "\n"
                                          " * @classdesc" (0+ not-newline) "\n"
                                          " */"))))))
+
+(describe "neogen-sh"
+  (before-each
+    (spy-on 'file-name-extension :and-return-value "sh"))
+  (it "Function generation works"
+    (neogen-with-test-file #'sh-mode "
+function my_function() {
+   echo \"${abc} ${ndef}\"
+   echo \"${abc} $def $ghi\"
+}
+"
+      (search-forward "my_function(")
+      (neogen-func)
+      (goto-char (point-min))
+      (expect (search-forward-regexp (rx "#######################################\n"
+                                         "#" (0+ not-newline) "\n"
+                                         "# Globals:\n"
+                                         "#   abc" (0+ not-newline) "\n"
+                                         "#   ndef" (0+ not-newline) "\n"
+                                         "#   abc" (0+ not-newline) "\n"
+                                         "# Arguments:\n"
+                                         "#" (0+ not-newline) "\n"
+                                         "#" (0+ not-newline) "\n"
+                                         "#######################################\n")))))
+  (it "File generation works"
+    (neogen-with-test-file #'sh-mode
+        "
+function my_function() {
+   echo \"${abc} ${ndef}\"
+   echo \"${abc} $def $ghi\"
+}
+"
+      (search-forward "my_function(")
+      (neogen-file)
+      (goto-char (point-min))
+      (expect (search-forward-regexp (rx "#!/bin/bash"))))))
 
 
 

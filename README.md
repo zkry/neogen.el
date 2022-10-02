@@ -34,6 +34,8 @@ The following is a table of configurations and templates:
 |------------|-----------------------|----------------------------|
 | C          | Doxygen               | func, file, type           |
 | javascript | JSDoc                 | func, class, type, file    |
+| typescript | JSDoc                 | func, class, type, file    |
+| sh         | Google Style Guide    | func, file                 |
 
 If you don't see your desired language/annotation-syntax supported
 feel free to open up an issue.

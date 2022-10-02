@@ -336,7 +336,8 @@ elements (TEMPLATE-ITEM . DEFAULT-VALUE)"
           (error "Unable to find code for documentation of type %s" type))
         (let* ((extract-data (apply #'neogen-config-extract loc-data))
                (template-lines (neogen-generate-template type template extract-data))
-               (existing-extractions (neogen-extract-existing template-lines))
+               ;; (existing-extractions (neogen-extract-existing template-lines))
+               (existing-extractions nil)
                (yas-snippet (neogen-template-to-yas-snippet template-lines existing-extractions)))
           (neogen-insert-template (car loc-data) yas-snippet))))))
 
