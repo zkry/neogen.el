@@ -113,7 +113,7 @@
                 res))))
    :class '(([function_declaration class_declaration expression_statement variable_declaration export_statement] [0]
              (lambda (node)
-               '((class_name . "")))))
+               '((class_name . nil)))))
    :type '(([variable_declaration lexical_declaration] [0]
             (lambda (node)
               (let ((tree '(:retrieve first :node-type identifier :extract t :as type)))
