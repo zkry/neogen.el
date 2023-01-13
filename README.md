@@ -2,6 +2,9 @@
 
 ## Features
 
+**NOTE: This package uses the older version of tree-sitter and I have
+plans update this package to the new native tree-sitter library**
+
 Neogen.el is an Emacs port of https://github.com/danymat/neogen, a
 package for generating annotation templates.  The package uses
 Tree-sitter to extract the code context and is able to fill in
